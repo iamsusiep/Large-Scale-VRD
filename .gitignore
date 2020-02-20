@@ -14,3 +14,12 @@ __pycache__/
 # Generated C files
 lib/utils/cython_*.c
 
+# Others
+Detectron.egg-info/
+build/
+checkpoints/
+datasets/
+lib/Detectron.egg-info/
+lib/build/
+
+
