@@ -10,7 +10,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-
+from datasets.vcr_wiki_and_relco import vcr_wiki_and_relco
 from datasets.vg_wiki_and_relco import vg_wiki_and_relco
 from datasets.vg_wiki_and_relco_lan import vg_wiki_and_relco_lan
 
@@ -25,7 +25,9 @@ for split in ['train', 'val', 'test']:
 name = 'vg_wiki_and_relco_lan'
 __sets_lan[name] = (lambda: vg_wiki_and_relco_lan())
 
+__sets['vcr_wiki_and_relco_test'] = (lambda: vcr_wiki_and_relco())
 
+__sets_lan['vcr_wiki_and_relco_lan'] =(lambda: vg_wiki_and_relco_lan()) 
 def get_landb(name):
     if name not in __sets_lan.keys():
         raise KeyError('Unknown dataset: {}'.format(name))

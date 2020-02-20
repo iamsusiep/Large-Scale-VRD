@@ -82,7 +82,7 @@ def test():
         roidb_size=len(test_model.roi_data_loader._roidb))
     test_timer = Timer()
     logger.info('Test epoch iters: {}'.format(total_test_iters))
-
+    """
     accumulated_accs = {}
     for key in test_evaluator.__dict__.keys():
         if key.find('acc') >= 0:
@@ -92,7 +92,7 @@ def test():
     for key in test_evaluator.__dict__.keys():
         if key.find('acc') >= 0:
             wins[key] = None
-
+    """
     params_file = cfg.TEST.WEIGHTS
     checkpoints_rel.initialize_params_from_file(
         model=test_model, weights_file=params_file,
@@ -104,12 +104,12 @@ def test():
         test_timer.tic()
         workspace.RunNet(test_model.net.Proto().name)
         test_timer.toc()
-        test_evaluator.eval_im_dets_triplet_topk()
+        #test_evaluator.eval_im_dets_triplet_topk()
         logger.info('Tested {}/{} time: {}'.format(
             test_iter, total_test_iters, round(test_timer.average_time, 3)))
-    iter_accs = test_evaluator.calculate_and_plot_accuracy()
-    for key in iter_accs.keys():
-        accumulated_accs[key].append(iter_accs[key])
+    #iter_accs = test_evaluator.calculate_and_plot_accuracy()
+    #for key in iter_accs.keys():
+    #    accumulated_accs[key].append(iter_accs[key])
     test_evaluator.save_all_dets()
 
     test_model.roi_data_loader.shutdown()

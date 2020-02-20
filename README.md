@@ -1,5 +1,6 @@
 # Command
 `CUDA_VISIBLE_DEVICES=4 python tools/test_net_rel.py --cfg configs/vg/VG_wiki_and_relco_VGG16_softmaxed_triplet_2_lan_layers_1gpu.yaml`
+`CUDA_VISIBLE_DEVICES=3 python tools/test_net_rel.py --cfg configs/vg/vcr_softmaxed_triplet_1gpu.yaml`
 # Large-scale Visual Relationship Understanding
 
 ![alt text](https://github.com/facebookresearch/Large-Scale-VRD/blob/master/Examples.PNG)

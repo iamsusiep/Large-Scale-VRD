@@ -47,6 +47,7 @@ from modeling.detector_rel import DetectionModelHelper
 from roi_data.loader_rel import RoIDataLoader
 from datasets.roidb_rel import combined_roidb_for_training
 from datasets.roidb_rel import combined_roidb_for_val_test
+from datasets.roidb_rel import combined_roidb_for_vcr
 from datasets.factory import get_landb
 import modeling.optimizer_rel as optim
 import roi_data.minibatch_rel
@@ -98,7 +99,8 @@ def build_model(model, split):
         proposals = get_gt_val_test_proposals('val', roidb)
         logger.info('Validation proposals length: {}'.format(len(proposals)))
     else:
-        roidb = combined_roidb_for_val_test(cfg.DATASET + '_' + cfg.TEST.DATA_TYPE)
+        print("modified")
+        roidb = combined_roidb_for_vcr(cfg.DATASET + '_' + cfg.TEST.DATA_TYPE)
         proposals = get_gt_val_test_proposals(cfg.TEST.DATA_TYPE, roidb)
     logger.info('{:d} roidb entries'.format(len(roidb)))
 
