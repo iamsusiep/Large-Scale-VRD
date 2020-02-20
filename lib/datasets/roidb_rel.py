@@ -30,6 +30,7 @@ def combined_roidb_for_vcr(dataset_names):
 
         roidb_file = os.path.join(cfg.DATA_DIR, 'roidb_cache', dataset_name +
                                   '_configured_gt_roidb.pkl')
+        '''        
         if os.path.exists(roidb_file):
             with open(roidb_file, 'rb') as fid:
                 roidb = cPickle.load(fid)
@@ -37,7 +38,8 @@ def combined_roidb_for_vcr(dataset_names):
             logger.info('{} configured gt roidb loaded from {}'.format(
                 dataset_name, roidb_file))
             return roidb
-
+        '''
+        print("combined_roidb_for_vcr, dataset_name", dataset_name)
         ds = get_imdb(dataset_name)
         roidb = ds.gt_roidb()
         logger.info('loading widths and appending them')
@@ -47,54 +49,8 @@ def combined_roidb_for_vcr(dataset_names):
             logger.info('creating roidb for image {}'.format(i + 1))
             roidb[i]['width'] = widths[i]
             roidb[i]['height'] = heights[i]
+            print("roidb_rel, ds.image_path_at(i)", ds.image_path_at(i))
             roidb[i]['image'] = ds.image_path_at(i)
-            gt_sbj_overlaps = roidb[i]['gt_sbj_overlaps'].toarray()
-            # max sbj_overlap with gt over classes (columns)
-            sbj_max_overlaps = gt_sbj_overlaps.max(axis=1)
-            # gt sbj_class that had the max sbj_overlap
-            sbj_max_classes = gt_sbj_overlaps.argmax(axis=1)
-            roidb[i]['sbj_max_classes'] = sbj_max_classes
-            roidb[i]['sbj_max_overlaps'] = sbj_max_overlaps
-            # sanity checks
-            # max overlap of 0 => class should be zero (background)
-            zero_inds = np.where(sbj_max_overlaps == 0)[0]
-            assert all(sbj_max_classes[zero_inds] == 0)
-            # max overlap > 0 => class should not be zero (must be a fg class)
-            nonzero_inds = np.where(sbj_max_overlaps > 0)[0]
-            assert all(sbj_max_classes[nonzero_inds] != 0)
-
-            # need gt_obj_overlaps as a dense array for argmax
-            gt_obj_overlaps = roidb[i]['gt_obj_overlaps'].toarray()
-            # max obj_overlap with gt over classes (columns)
-            obj_max_overlaps = gt_obj_overlaps.max(axis=1)
-            # gt obj_class that had the max obj_overlap
-            obj_max_classes = gt_obj_overlaps.argmax(axis=1)
-            roidb[i]['obj_max_classes'] = obj_max_classes
-            roidb[i]['obj_max_overlaps'] = obj_max_overlaps
-
-            # sanity checks
-            # max overlap of 0 => class should be zero (background)
-            zero_inds = np.where(obj_max_overlaps == 0)[0]
-            assert all(obj_max_classes[zero_inds] == 0)
-            # max overlap > 0 => class should not be zero (must be a fg class)
-            nonzero_inds = np.where(obj_max_overlaps > 0)[0]
-            assert all(obj_max_classes[nonzero_inds] != 0)
-
-            # need gt_rel_overlaps as a dense array for argmax
-            gt_rel_overlaps = roidb[i]['gt_rel_overlaps'].toarray()
-            # max rel_overlap with gt over classes (columns)
-            rel_max_overlaps = gt_rel_overlaps.max(axis=1)
-            # gt rel_class that had the max rel_overlap
-            rel_max_classes = gt_rel_overlaps.argmax(axis=1)
-            roidb[i]['rel_max_classes'] = rel_max_classes
-            roidb[i]['rel_max_overlaps'] = rel_max_overlaps
-            # sanity checks
-            # max overlap of 0 => class should be zero (background)
-            zero_inds = np.where(rel_max_overlaps == 0)[0]
-            assert all(rel_max_classes[zero_inds] == 0)
-            # max overlap > 0 => class should not be zero (must be a fg class)
-            nonzero_inds = np.where(rel_max_overlaps > 0)[0]
-            assert all(rel_max_classes[nonzero_inds] != 0)
 
         logger.info('Loaded dataset: {:s}'.format(ds.name))
         logger.info('len(roidb): {}'.format(len(roidb)))

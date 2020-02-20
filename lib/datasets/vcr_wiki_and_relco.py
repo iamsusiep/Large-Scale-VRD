@@ -31,7 +31,9 @@ logger = logging.getLogger(__name__)
 
 class vcr_wiki_and_relco(imdb_rel):
     def __init__(self):
-        self.filenames = glob.glob('~/spring20/vilbert_beta/data/VCR/vcr1images/lsmdc_0001_American_Beauty/*.json')
+        print("im here, vcr_wiki_and_relco")
+        self.filenames = glob.glob('/home/suji/spring20/vilbert_beta/data/VCR/vcr1images/lsmdc_0001_American_Beauty/*.json')
+        print("filenames length", len(self.filenames))
         self.widths, self.heights = [], []
         self.bb_lists = []
         for fn in self.filenames:
@@ -40,9 +42,9 @@ class vcr_wiki_and_relco(imdb_rel):
             w, h=data['width'], data['height']
             self.widths.append(w)
             self.heights.append(h)
-            bb_list =data['boxes'] 
+            bb_list =data['boxes']
             self.bb_lists.append(bb_list)
-            
+         
         imdb_rel.__init__(self, 'vcr_wiki_and_relco')
         # Default to roidb handler
         self._roidb_handler = self.gt_roidb
@@ -66,7 +68,6 @@ class vcr_wiki_and_relco(imdb_rel):
                 roidb = cPickle.load(fid)
             logger.info('{} gt roidb loaded from {}'.format(self.name, cache_file))
             return roidb
-
         print('Relco words converted to lowercase.')
         gt_roidb = \
             [self._load_vcr_annotation(index, fn, len(self.filenames))
@@ -77,16 +78,18 @@ class vcr_wiki_and_relco(imdb_rel):
         print('wrote gt roidb to {}'.format(cache_file))
 
         return gt_roidb
-
+    def image_path_at(self, i):
+        return self.filenames[i].replace('.json', '.jpg')
 
     def _load_vcr_annotation(self, index, fn, length):
         """
         Load image and bounding boxes info.
         """
-
+        bb_list = self.bb_lists[index]
         print("Loading image %d/%d..." % (index, length))
-        pairings = list(itertools.product(my_list, repeat=2))
+        pairings = list(itertools.product(bb_list, repeat=2))
         num_rels = len(pairings)
+        print("num_rels", num_rels)
         sbj_boxes = np.zeros((num_rels, 4), dtype=np.uint16)
         obj_boxes = np.zeros((num_rels, 4), dtype=np.uint16)
         rel_boxes = np.zeros((num_rels, 4), dtype=np.uint16)
@@ -95,7 +98,9 @@ class vcr_wiki_and_relco(imdb_rel):
         obj_seg_areas = np.zeros((num_rels), dtype=np.float32)
         rel_seg_areas = np.zeros((num_rels), dtype=np.float32)
 
-        for sbj_box, obj_box in pairings:
+        for ix, (sbj, obj) in enumerate(pairings):
+            sbj_box = sbj[:-1]
+            obj_box = obj[:-1]
             rel_box = box_utils.box_union(sbj_box, obj_box)
             sbj_boxes[ix, :] = sbj_box
             obj_boxes[ix, :] = obj_box

@@ -97,6 +97,8 @@ class RoIDataLoader(object):
         def put_blobs_into_queue(blobs):
             ordered_blobs = OrderedDict()
             for key in self.get_output_names():
+                if type(blobs[key]) == list:
+                    print(key)
                 assert blobs[key].dtype in (np.int32, np.float32), \
                     'Blob {} of dtype {} must have dtype of ' \
                     'np.int32 or np.float32'.format(key, blobs[key].dtype)
@@ -136,6 +138,7 @@ class RoIDataLoader(object):
         """
         valid = False
         while not valid:
+            #print("self._proposals", self._proposals)
             db_inds = self._get_next_minibatch_inds()
             minibatch_db = [self._roidb[i] for i in db_inds]
             if self._split == 'train':
@@ -194,6 +197,8 @@ class RoIDataLoader(object):
             self._cur += cfg.TRAIN.IMS_PER_BATCH
             if self._cur >= len(self._perm):
                 self._shuffle_roidb_inds()
+        ##print("_get_next_minibatch_inds", db_inds)
+        #print("cfg.TRAIN.IMS_PER_BATCH", cfg.TRAIN.IMS_PER_BATCH)
         return db_inds
 
     def get_output_names(self):

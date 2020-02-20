@@ -102,6 +102,7 @@ def build_model(model, split):
         print("modified")
         roidb = combined_roidb_for_vcr(cfg.DATASET + '_' + cfg.TEST.DATA_TYPE)
         proposals = get_gt_val_test_proposals(cfg.TEST.DATA_TYPE, roidb)
+        #print("build_model, proposals", proposals)
     logger.info('{:d} roidb entries'.format(len(roidb)))
 
     landb = get_landb(cfg.DATASET + '_lan')
@@ -161,10 +162,12 @@ def add_inputs(model, roidb=None, landb=None, proposals=None, split='train'):
 
     if roidb is not None:
         # To make debugging easier you can set cfg.DATA_LOADER.NUM_THREADS = 1
+        print("init roidb")
         model.roi_data_loader = RoIDataLoader(
             split=split, roidb=roidb, landb=landb, proposals=proposals,
             num_loaders=cfg.DATA_LOADER.NUM_THREADS
         )
+        print("done roidb")
     orig_num_op = len(model.net._net.op)
     blob_names = roi_data.minibatch_rel.get_minibatch_blob_names(split)
     for gpu_id in range(cfg.NUM_DEVICES):
