@@ -120,12 +120,15 @@ class RoIDataLoader(object):
         logger.info('Stopping mini-batch loading thread')
 
     def enqueue_blobs_thread(self, gpu_id, blob_names):
+        print("enqueue_blobs_thread")
         """Transfer mini-batches from a mini-batch queue to a BlobsQueue."""
         with self.coordinator.stop_on_exception():
             while not self.coordinator.should_stop():
                 if self._minibatch_queue.qsize == 0:
                     logger.warning('Mini-batch queue is empty')
                 blobs = coordinated_get(self.coordinator, self._minibatch_queue)
+                print("enqueue_blobs_thread, blob_names", blob_names)   
+                print("enqueue_blobs_thread, blobs.values", blobs.values())   
                 self.enqueue_blobs(gpu_id, blob_names, blobs.values())
                 logger.debug(
                     'batch queue size {}'.format(self._minibatch_queue.qsize())
@@ -230,6 +233,7 @@ class RoIDataLoader(object):
         )
 
     def create_threads(self):
+        print("loader_rel, create_threads")
         # Create mini-batch loader threads, each of which builds mini-batches
         # and places them into a queue in CPU memory
         self._workers = [
@@ -276,6 +280,7 @@ class RoIDataLoader(object):
 
     def create_blobs_queues(self):
         """Create one BlobsQueue for each GPU to hold mini-batches."""
+        print("create_blobs_queues")
         for gpu_id in range(self._num_gpus):
             with c2_utils.GpuNameScope(gpu_id):
                 workspace.RunOperatorOnce(

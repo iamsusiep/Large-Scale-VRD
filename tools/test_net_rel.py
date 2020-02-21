@@ -104,6 +104,7 @@ def test():
         test_timer.tic()
         workspace.RunNet(test_model.net.Proto().name)
         test_timer.toc()
+        test_evaluator.vcr_eval_im_dets_triplet_topk()
         #test_evaluator.eval_im_dets_triplet_topk()
         logger.info('Tested {}/{} time: {}'.format(
             test_iter, total_test_iters, round(test_timer.average_time, 3)))
