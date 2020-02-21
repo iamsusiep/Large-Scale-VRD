@@ -198,8 +198,8 @@ class RoIDataLoader(object):
             db_inds = [self._perm[i] for i in range(cfg.TRAIN.IMS_PER_BATCH)]
             self._perm.rotate(-cfg.TRAIN.IMS_PER_BATCH)
             self._cur += cfg.TRAIN.IMS_PER_BATCH
-            if self._cur >= len(self._perm):
-                self._shuffle_roidb_inds()
+            # if self._cur >= len(self._perm):
+            #     self._shuffle_roidb_inds()
         ##print("_get_next_minibatch_inds", db_inds)
         #print("cfg.TRAIN.IMS_PER_BATCH", cfg.TRAIN.IMS_PER_BATCH)
         return db_inds
