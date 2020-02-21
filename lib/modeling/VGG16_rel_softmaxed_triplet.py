@@ -662,4 +662,4 @@ def add_labels_and_scores_topk(model, label):
     else:
         all_lan_embd = 'all_prd_lan_embds'
     model.net.MatMul(['x' + suffix, all_lan_embd], 'all_Y' + suffix, trans_b=1)
-    model.net.TopK('all_Y' + suffix, ['scores' + suffix, 'labels' + suffix], k=250)
+    model.net.TopK('all_Y' + suffix, ['scores' + suffix, 'labels' + suffix], k=-1)
