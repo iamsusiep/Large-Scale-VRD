@@ -88,7 +88,7 @@ class RoIDataLoader(object):
         self.coordinator = Coordinator()
 
         self._output_names = get_minibatch_blob_names(split)
-        self._shuffle_roidb_inds()
+        # self._shuffle_roidb_inds()
         self.create_threads()
 
     def minibatch_loader_thread(self):
