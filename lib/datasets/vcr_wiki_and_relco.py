@@ -32,7 +32,8 @@ logger = logging.getLogger(__name__)
 class vcr_wiki_and_relco(imdb_rel):
     def __init__(self):
         print("im here, vcr_wiki_and_relco")
-        self.filenames = glob.glob('/home/suji/spring20/vilbert_beta/data/VCR/vcr1images/lsmdc_0001_American_Beauty/*.json')
+        #self.filenames = sorted(glob.glob('/home/suji/spring20/vilbert_beta/data/VCR/vcr1images/lsmdc_0001_American_Beauty/*.json'))
+        self.filenames = sorted(glob.glob('/home/suji/spring20/vilbert_beta/data/VCR/vcr1images/lsmdc_1054_Harry_Potter_and_the_prisoner_of_azkaban/*.json'))
         print("filenames length", len(self.filenames))
         self.widths, self.heights = [], []
         self.bb_lists = []
