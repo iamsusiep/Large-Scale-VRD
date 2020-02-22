@@ -87,8 +87,9 @@ class vcr_wiki_and_relco(imdb_rel):
         Load image and bounding boxes info.
         """
         bb_list = self.bb_lists[index]
+        print("bb_list:", bb_list)
         print("Loading image %d/%d..." % (index, length))
-        pairings = list(itertools.product(bb_list, repeat=2))
+        pairings = [(x, y) for x, y in list(itertools.product(bb_list, repeat=2)) if x != y]
         num_rels = len(pairings)
         print("num_rels", num_rels)
         sbj_boxes = np.zeros((num_rels, 4), dtype=np.uint16)
@@ -100,6 +101,7 @@ class vcr_wiki_and_relco(imdb_rel):
         rel_seg_areas = np.zeros((num_rels), dtype=np.float32)
 
         for ix, (sbj, obj) in enumerate(pairings):
+
             sbj_box = sbj[:-1]
             obj_box = obj[:-1]
             rel_box = box_utils.box_union(sbj_box, obj_box)
