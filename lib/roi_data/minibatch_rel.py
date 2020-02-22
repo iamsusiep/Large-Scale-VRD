@@ -87,6 +87,7 @@ def get_minibatch_blob_names(split):
         blob_names += ['image_scale']
         blob_names += ['subbatch_id']
         blob_names += ['num_proposals']
+        blob_names += ['image']
 
     return blob_names
 

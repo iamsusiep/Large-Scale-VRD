@@ -89,7 +89,7 @@ class Evaluator():
             ['image_id', 'image_idx',
              'boxes_sbj', 'boxes_obj', 'boxes_rel',
              'labels_sbj', 'labels_obj', 'labels_rel',
-             'scores_sbj', 'scores_obj', 'scores_rel']
+             'scores_sbj', 'scores_obj', 'scores_rel', 'image']
         self.all_dets = {key: [] for key in self.det_list}
         print("roidb_size", roidb_size)
         self.roidb_size = roidb_size
@@ -187,10 +187,16 @@ class Evaluator():
                 prefix + '{}/{}'.format(gpu_id, 'subbatch_id'))[0]
             if subbatch_id in self.tested[image_idx]:
                 continue
+
+
+            image_fn = workspace.FetchBlob(
+                prefix + '{}/{}'.format(gpu_id, 'image'))[0]
+            print("evaluator_rel, image_fn", image_fn)
             new_batch_flag = True
             self.tested[image_idx].add(subbatch_id)
 
             self.all_dets['image_idx'].append(int(image_idx))
+            self.all_dets['image'].append(image_fn)
             #image_id = workspace.FetchBlob(
             #    prefix + '{}/{}'.format(gpu_id, 'image_id'))[0]
             #self.all_dets['image_id'].append(image_id)
