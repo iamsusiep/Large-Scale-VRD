@@ -101,6 +101,7 @@ def get_minibatch(split, landb, roidb, roidb_inds, proposals, low_shot_helper):
     # logger.info('len(proposals): {}'.format(len(proposals)))
 
     # Get the input image blob, formatted for caffe2
+    print("get_minibatch, before scaling:", roidb['sbj_boxes'])
     im_blob, im_scales = _get_image_blob(roidb)
     blobs['data'] = im_blob
     # add_fast_rcnn_blobs_timer = Timer()
@@ -109,6 +110,7 @@ def get_minibatch(split, landb, roidb, roidb_inds, proposals, low_shot_helper):
     valid = add_fast_rcnn_blobs(
         blobs, im_scales, landb, roidb, roidb_inds, proposals, split,
         low_shot_helper)
+
 
     # add_fast_rcnn_blobs_timer.toc()
     # logger.info(

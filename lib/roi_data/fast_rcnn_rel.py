@@ -43,17 +43,16 @@ def add_fast_rcnn_blobs(
             num_proposals = proposals[im_i]['boxes_sbj'].shape[0]
             # logger.info('num_proposals: {}'.format(num_proposals))
             if num_proposals > 0:
-                print("add_fast_rcnn_blobs,  num_proposals > 0")
-                print("scale", scale)
                 all_sbj_rois = np.zeros((num_proposals, 5), dtype=np.float32)
                 all_obj_rois = np.zeros((num_proposals, 5), dtype=np.float32)
                 all_rel_rois = np.zeros((num_proposals, 5), dtype=np.float32)
                 all_sbj_rois[:, 1:5] = proposals[im_i]['boxes_sbj'] * scale
                 all_obj_rois[:, 1:5] = proposals[im_i]['boxes_obj'] * scale
                 all_rel_rois[:, 1:5] = proposals[im_i]['boxes_rel'] * scale
+                print("scaled boxes_sbj", all_sbj_rois[:, 1:5])
+                print("scaled boxes_obj", all_obj_rois[:, 1:5])
+                print("scaled boxes_rel", all_rel_rois[:, 1:5])
             else:  # create dummy rois
-                print("add_fast_rcnn_blobs,  num_proposals <= 0")
-                print("scale", scale)
                 all_sbj_rois = np.zeros((1, 5), dtype=np.float32)
                 all_obj_rois = np.zeros((1, 5), dtype=np.float32)
                 all_rel_rois = np.zeros((1, 5), dtype=np.float32)
