@@ -103,6 +103,7 @@ def get_minibatch(split, landb, roidb, roidb_inds, proposals, low_shot_helper):
 
     # Get the input image blob, formatted for caffe2
     print("get_minibatch, before scaling:", roidb[0]['sbj_boxes'])
+    print("get_minibatch, filename:", roidb[0]['image'])
     im_blob, im_scales = _get_image_blob(roidb)
     blobs['data'] = im_blob
     # add_fast_rcnn_blobs_timer = Timer()
