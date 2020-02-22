@@ -134,4 +134,5 @@ class vcr_wiki_and_relco(imdb_rel):
                 'sbj_vecs': None,
                 'obj_vecs': None,
                 'prd_vecs': None,
-                'flipped': False}
+                'flipped': False,
+                'fn': fn}

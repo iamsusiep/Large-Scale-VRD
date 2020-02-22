@@ -21,7 +21,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def add_fast_rcnn_blobs(
+def  add_fast_rcnn_blobs(
         blobs, im_scales, landb, roidb, roidb_inds, proposals, split, low_shot_helper):
     """Add blobs needed for training Fast R-CNN style models."""
     # Sample training RoIs from each image and append them to the blob lists
@@ -49,9 +49,9 @@ def add_fast_rcnn_blobs(
                 all_sbj_rois[:, 1:5] = proposals[im_i]['boxes_sbj'] * scale
                 all_obj_rois[:, 1:5] = proposals[im_i]['boxes_obj'] * scale
                 all_rel_rois[:, 1:5] = proposals[im_i]['boxes_rel'] * scale
-                print("scaled boxes_sbj", all_sbj_rois[:, 1:5])
-                print("scaled boxes_obj", all_obj_rois[:, 1:5])
-                print("scaled boxes_rel", all_rel_rois[:, 1:5])
+                print("{} scaled boxes_sbj".format(entry['fn']), all_sbj_rois[:, 1:5])
+                print("{} scaled boxes_obj".format(entry['fn']), all_obj_rois[:, 1:5])
+                print("{} scaled boxes_rel".format(entry['fn']), all_rel_rois[:, 1:5])
             else:  # create dummy rois
                 all_sbj_rois = np.zeros((1, 5), dtype=np.float32)
                 all_obj_rois = np.zeros((1, 5), dtype=np.float32)

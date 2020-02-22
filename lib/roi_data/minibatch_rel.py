@@ -87,6 +87,7 @@ def get_minibatch_blob_names(split):
         blob_names += ['image_scale']
         blob_names += ['subbatch_id']
         blob_names += ['num_proposals']
+        blob_names += ['fn']
 
     return blob_names
 
@@ -101,7 +102,7 @@ def get_minibatch(split, landb, roidb, roidb_inds, proposals, low_shot_helper):
     # logger.info('len(proposals): {}'.format(len(proposals)))
 
     # Get the input image blob, formatted for caffe2
-    print("get_minibatch, before scaling:", roidb[0]['sbj_boxes'])
+    print("get_minibatch {}, before scaling:".format(roidb[0]['fn']), roidb[0]['sbj_boxes'])
     im_blob, im_scales = _get_image_blob(roidb)
     blobs['data'] = im_blob
     # add_fast_rcnn_blobs_timer = Timer()
