@@ -46,7 +46,7 @@ def combined_roidb_for_val_test(dataset_names):
             logger.info('creating roidb for image {}'.format(i + 1))
             roidb[i]['width'] = widths[i]
             roidb[i]['height'] = heights[i]
-            roidb[i]['image'] = ds.image_path_at(i)
+            roidb[i]['image'] = roidb[i]['image_id']#ds.image_path_at(i)
             gt_sbj_overlaps = roidb[i]['gt_sbj_overlaps'].toarray()
             # max sbj_overlap with gt over classes (columns)
             sbj_max_overlaps = gt_sbj_overlaps.max(axis=1)

@@ -73,7 +73,6 @@ def add_fast_rcnn_blobs(
             #frcn_blobs['image_id'] = \
             #    np.array(float(entry['image'].split('/')[-1][:-4]))[np.newaxis].astype(np.float32)
             frcn_blobs['image_id'] = np.array(entry['image'])[np.newaxis].astype(np.int32)
-            #frcn_blobs['image_id'] = np.array(entry['image'])[np.newaxis]
             frcn_blobs['image_scale'] = np.array(scale)[np.newaxis].astype(np.float32)
             frcn_blobs['subbatch_id'] = \
                 np.array(subbatch_id)[np.newaxis].astype(np.float32)

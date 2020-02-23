@@ -65,6 +65,11 @@ class RoIDataLoader(object):
         minibatch_queue_size=64,
         blobs_queue_capacity=8
     ):
+        self.d = {}
+        for entry in entries:
+            imgid =int(entry['img_id'].split('-')[1])
+            if imgid not in self.d.keys():
+                self.d[imgid] = entry['img_fn']
         self._split = split
         self._roidb = roidb
         self._landb = landb
@@ -147,7 +152,7 @@ class RoIDataLoader(object):
                 blobs, valid = get_minibatch(
                     self._split,
                     self._landb, minibatch_db, db_inds, minibatch_proposals,
-                    None)
+                    None, self.d)
             else:
                 minibatch_proposals = self._proposals[db_inds[0]]
                 num_proposals = len(minibatch_proposals['boxes_sbj'])

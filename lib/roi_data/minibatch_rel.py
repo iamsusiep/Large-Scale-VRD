@@ -98,7 +98,7 @@ def get_minibatch_blob_names(split):
     return blob_names
 
 
-def get_minibatch(split, landb, roidb, roidb_inds, proposals, low_shot_helper):
+def get_minibatch(split, landb, roidb, roidb_inds, proposals, low_shot_helper, d= None):
     """Given a roidb, construct a minibatch sampled from it."""
     # We collect blobs from each image onto a list and then concat them into a
     # single tensor, hence we initialize each blob to an empty list
@@ -108,7 +108,7 @@ def get_minibatch(split, landb, roidb, roidb_inds, proposals, low_shot_helper):
     # logger.info('len(proposals): {}'.format(len(proposals)))
 
     # Get the input image blob, formatted for caffe2
-    im_blob, im_scales = _get_image_blob(roidb)
+    im_blob, im_scales = _get_image_blob(roidb,d)
     blobs['data'] = im_blob
     # add_fast_rcnn_blobs_timer = Timer()
     # add_fast_rcnn_blobs_timer.tic()
@@ -124,7 +124,7 @@ def get_minibatch(split, landb, roidb, roidb_inds, proposals, low_shot_helper):
     return blobs, valid
 
 
-def _get_image_blob(roidb):
+def _get_image_blob(roidb,d = None):
     """Builds an input blob from the images in the roidb at the specified
     scales.
     """
@@ -135,7 +135,7 @@ def _get_image_blob(roidb):
     processed_ims = []
     im_scales = []
     for i in range(num_images):
-        im = cv2.imread(roidb[i]['image'])
+        im = cv2.imread(d[roidb[i]['image']])
         cnt = 1
         while im is None:
             cnt += 1
