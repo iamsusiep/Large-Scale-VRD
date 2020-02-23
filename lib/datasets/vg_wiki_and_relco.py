@@ -50,7 +50,7 @@ class vg_wiki_and_relco(imdb_rel):
         self._predicate_class_to_ind = \
             dict(zip(self._predicate_classes, range(self._num_predicate_classes)))
         logger.info(len(self._predicate_class_to_ind))
-
+        self._image_index = []
         # self._image_index = self._load_image_set_index()
         # Default to roidb handler
         self._roidb_handler = self.gt_roidb
@@ -151,11 +151,10 @@ class vg_wiki_and_relco(imdb_rel):
         print('Relco words converted to lowercase.')
 
         rel_data_path = os.path.join(
-            self._data_path, 'relationships_clean_spo_joined_and_merged.json')
+            self._data_path, 'rel_vcr.json')
         with open(rel_data_path) as f:
             all_rels = json.load(f)
         all_rels_map = {}
-        self.image_index = []
         for cnt, rel in enumerate(all_rels):
             all_rels_map[rel['image_id']] = cnt
             self.image_index.append(rel['image_id'])
@@ -225,6 +224,8 @@ class vg_wiki_and_relco(imdb_rel):
             sbj_boxes[ix, :] = sbj_box
             obj_boxes[ix, :] = obj_box
             rel_boxes[ix, :] = rel_box
+            print(sbj)
+            print(sbj['name'])
             sbj_names[ix] = sbj['name']
             obj_names[ix] = obj['name']
             prd_names[ix] = prd
