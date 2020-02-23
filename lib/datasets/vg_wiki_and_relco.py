@@ -217,7 +217,7 @@ class vg_wiki_and_relco(imdb_rel):
         for ix, rel in enumerate(img_rels['relationships']):
             sbj = rel['subject']
             obj = rel['object']
-            prd = rel['predicate']
+            # prd = rel['predicate']
             sbj_box = [sbj['x'], sbj['y'], sbj['x'] + sbj['w'], sbj['y'] + sbj['h']]
             obj_box = [obj['x'], obj['y'], obj['x'] + obj['w'], obj['y'] + obj['h']]
             rel_box = box_utils.box_union(sbj_box, obj_box)
@@ -228,16 +228,16 @@ class vg_wiki_and_relco(imdb_rel):
             print(sbj['name'])
             sbj_names[ix] = sbj['name']
             obj_names[ix] = obj['name']
-            prd_names[ix] = prd
+            # prd_names[ix] = prd
             sbj_cls = self._object_class_to_ind[str(sbj_names[ix])]
             obj_cls = self._object_class_to_ind[str(obj_names[ix])]
-            prd_cls = self._predicate_class_to_ind[str(prd_names[ix])]
+            # prd_cls = self._predicate_class_to_ind[str(prd_names[ix])]
             gt_sbj_classes[ix] = sbj_cls
             gt_obj_classes[ix] = obj_cls
             gt_rel_classes[ix] = prd_cls
             sbj_overlaps[ix, sbj_cls] = 1.0
             obj_overlaps[ix, obj_cls] = 1.0
-            rel_overlaps[ix, prd_cls] = 1.0
+            # rel_overlaps[ix, prd_cls] = 1.0
             sbj_seg_areas[ix] = (sbj_box[2] - sbj_box[0] + 1) * \
                                 (sbj_box[3] - sbj_box[1] + 1)
             obj_seg_areas[ix] = (obj_box[2] - obj_box[0] + 1) * \
@@ -303,53 +303,53 @@ class vg_wiki_and_relco(imdb_rel):
             obj_vecs[ix][half_dim:] = obj_vecs_relco
 
             # prd word2vec
-            prd_vecs_wiki = np.zeros(half_dim, dtype=np.float32)
-            prd_words = prd_names[ix].split()
-            for word in prd_words:
-                if word in self.model.vocab:
-                    raw_word = self.model[word]
-                    prd_vecs_wiki += (raw_word / la.norm(raw_word))
-                else:
-                    print('Singular word found: ', word)
-                    raise NameError('Terminated.')
-            prd_vecs_wiki /= len(prd_words)
-            prd_vecs_wiki /= la.norm(prd_vecs_wiki)
+            # prd_vecs_wiki = np.zeros(half_dim, dtype=np.float32)
+            # prd_words = prd_names[ix].split()
+            # for word in prd_words:
+            #     if word in self.model.vocab:
+            #         raw_word = self.model[word]
+            #         prd_vecs_wiki += (raw_word / la.norm(raw_word))
+            #     else:
+            #         print('Singular word found: ', word)
+            #         raise NameError('Terminated.')
+            # prd_vecs_wiki /= len(prd_words)
+            # prd_vecs_wiki /= la.norm(prd_vecs_wiki)
 
-            prd_vecs_relco = np.zeros(half_dim, dtype=np.float32)
-            prd_words = prd_names[ix].split()
-            for word in prd_words:
-                if word in self.relco_model.wv.vocab:
-                    raw_word = self.relco_model[word]
-                    prd_vecs_relco += (raw_word / la.norm(raw_word))
-                else:
-                    prd_vecs_relco += \
-                        (self.relco_vec_mean / la.norm(self.relco_vec_mean))
-            prd_vecs_relco /= len(prd_words)
-            prd_vecs_relco /= la.norm(prd_vecs_relco)
+            # prd_vecs_relco = np.zeros(half_dim, dtype=np.float32)
+            # prd_words = prd_names[ix].split()
+            # for word in prd_words:
+            #     if word in self.relco_model.wv.vocab:
+            #         raw_word = self.relco_model[word]
+            #         prd_vecs_relco += (raw_word / la.norm(raw_word))
+            #     else:
+            #         prd_vecs_relco += \
+            #             (self.relco_vec_mean / la.norm(self.relco_vec_mean))
+            # prd_vecs_relco /= len(prd_words)
+            # prd_vecs_relco /= la.norm(prd_vecs_relco)
 
-            prd_vecs[ix][:half_dim] = prd_vecs_wiki
-            prd_vecs[ix][half_dim:] = prd_vecs_relco
+            # prd_vecs[ix][:half_dim] = prd_vecs_wiki
+            # prd_vecs[ix][half_dim:] = prd_vecs_relco
 
         sbj_overlaps = scipy.sparse.csr_matrix(sbj_overlaps)
         obj_overlaps = scipy.sparse.csr_matrix(obj_overlaps)
-        rel_overlaps = scipy.sparse.csr_matrix(rel_overlaps)
+        # rel_overlaps = scipy.sparse.csr_matrix(rel_overlaps)
 
         return {'sbj_boxes': sbj_boxes,
                 'obj_boxes': obj_boxes,
                 'rel_boxes': rel_boxes,
                 'sbj_names': sbj_names,
                 'obj_names': obj_names,
-                'prd_names': prd_names,
+                'prd_names': None,
                 'gt_sbj_classes': gt_sbj_classes,
                 'gt_obj_classes': gt_obj_classes,
-                'gt_rel_classes': gt_rel_classes,
+                'gt_rel_classes': None,
                 'gt_sbj_overlaps': sbj_overlaps,
                 'gt_obj_overlaps': obj_overlaps,
-                'gt_rel_overlaps': rel_overlaps,
+                'gt_rel_overlaps': None,
                 'sbj_seg_areas': sbj_seg_areas,
                 'obj_seg_areas': obj_seg_areas,
                 'rel_seg_areas': rel_seg_areas,
                 'sbj_vecs': sbj_vecs,
                 'obj_vecs': obj_vecs,
-                'prd_vecs': prd_vecs,
+                'prd_vecs': None,
                 'flipped': False}
