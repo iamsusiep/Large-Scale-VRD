@@ -107,9 +107,7 @@ def test():
         test_evaluator.eval_im_dets_triplet_topk()
         logger.info('Tested {}/{} time: {}'.format(
             test_iter, total_test_iters, round(test_timer.average_time, 3)))
-    iter_accs = test_evaluator.calculate_and_plot_accuracy()
-    for key in iter_accs.keys():
-        accumulated_accs[key].append(iter_accs[key])
+
     test_evaluator.save_all_dets()
 
     test_model.roi_data_loader.shutdown()

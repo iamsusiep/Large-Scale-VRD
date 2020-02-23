@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 class vg_wiki_and_relco(imdb_rel):
     def __init__(self, image_set):
         imdb_rel.__init__(self, 'vg_wiki_and_relco_' + image_set)
-        self._image_set = image_set
+        # self._image_set = image_set
         self._data_path = os.path.join(cfg.DATA_DIR, 'Visual_Genome')
 
         self._object_classes = ['__background__']
@@ -51,7 +51,7 @@ class vg_wiki_and_relco(imdb_rel):
             dict(zip(self._predicate_classes, range(self._num_predicate_classes)))
         logger.info(len(self._predicate_class_to_ind))
 
-        self._image_index = self._load_image_set_index()
+        # self._image_index = self._load_image_set_index()
         # Default to roidb handler
         self._roidb_handler = self.gt_roidb
 
@@ -78,13 +78,13 @@ class vg_wiki_and_relco(imdb_rel):
         return image_path
 
     def get_widths_and_heights(self):
-        cache_file = os.path.join(
-            self._data_path, 'vg_' + self._image_set + '_image_sizes.pkl')
-        if os.path.exists(cache_file):
-            with open(cache_file, 'rb') as fid:
-                sizes = cPickle.load(fid)
-            print('{} image sizes loaded from {}'.format(self.name, cache_file))
-            return sizes[:, 0], sizes[:, 1]
+        # cache_file = os.path.join(
+        #     self._data_path, 'vg_' + self._image_set + '_image_sizes.pkl')
+        # if os.path.exists(cache_file):
+        #     with open(cache_file, 'rb') as fid:
+        #         sizes = cPickle.load(fid)
+        #     print('{} image sizes loaded from {}'.format(self.name, cache_file))
+        #     return sizes[:, 0], sizes[:, 1]
 
         sizes_list = [None] * self.num_images
         for i in range(self.num_images):
@@ -96,35 +96,35 @@ class vg_wiki_and_relco(imdb_rel):
         print('widths: ', sizes[:, 0])
         print('heights: ', sizes[:, 1])
 
-        with open(cache_file, 'wb') as fid:
-            cPickle.dump(sizes, fid, cPickle.HIGHEST_PROTOCOL)
-        print('wrote image sizes to {}'.format(cache_file))
+        # with open(cache_file, 'wb') as fid:
+        #     cPickle.dump(sizes, fid, cPickle.HIGHEST_PROTOCOL)
+        # print('wrote image sizes to {}'.format(cache_file))
 
         return sizes[:, 0], sizes[:, 1]
 
-    def _load_image_set_index(self):
-        """
-        Load the indexes listed in this dataset's image set file.
-        """
-        image_set_file = os.path.join(self._data_path, self._image_set + '_clean.json')
-        assert os.path.exists(image_set_file), \
-            'Path does not exist: {}'.format(image_set_file)
-        with open(image_set_file) as f:
-            data = json.load(f)
-        return data
+    # def _load_image_set_index(self):
+    #     """
+    #     Load the indexes listed in this dataset's image set file.
+    #     """
+    #     image_set_file = os.path.join(self._data_path, self._image_set + '_clean.json')
+    #     assert os.path.exists(image_set_file), \
+    #         'Path does not exist: {}'.format(image_set_file)
+    #     with open(image_set_file) as f:
+    #         data = json.load(f)
+    #     return data
 
     def gt_roidb(self):
         """
         Return the database of ground-truth regions of interest.
 
         This function loads/saves from/to a cache file to speed up future calls.
-        """
-        cache_file = os.path.join(self.cache_path, self.name + '_gt_roidb.pkl')
-        if os.path.exists(cache_file):
-            with open(cache_file, 'rb') as fid:
-                roidb = cPickle.load(fid)
-            logger.info('{} gt roidb loaded from {}'.format(self.name, cache_file))
-            return roidb
+        # """
+        # cache_file = os.path.join(self.cache_path, self.name + '_gt_roidb.pkl')
+        # if os.path.exists(cache_file):
+        #     with open(cache_file, 'rb') as fid:
+        #         roidb = cPickle.load(fid)
+        #     logger.info('{} gt roidb loaded from {}'.format(self.name, cache_file))
+        #     return roidb
 
         # Load gt data from scratch
         # Load Google's pre-trained Word2Vec model.
@@ -155,16 +155,22 @@ class vg_wiki_and_relco(imdb_rel):
         with open(rel_data_path) as f:
             all_rels = json.load(f)
         all_rels_map = {}
+        self.image_index = []
         for cnt, rel in enumerate(all_rels):
             all_rels_map[rel['image_id']] = cnt
+            self.image_index.append(rel['image_id'])
+        # gt_roidb = \
+        #     [self._load_vg_annotation(all_rels[all_rels_map[index]],
+        #                               index, cnt, len(self.image_index))
+        #      for cnt, index in enumerate(self.image_index)]
         gt_roidb = \
             [self._load_vg_annotation(all_rels[all_rels_map[index]],
                                       index, cnt, len(self.image_index))
              for cnt, index in enumerate(self.image_index)]
 
-        with open(cache_file, 'wb') as fid:
-            cPickle.dump(gt_roidb, fid, cPickle.HIGHEST_PROTOCOL)
-        print('wrote gt roidb to {}'.format(cache_file))
+        # with open(cache_file, 'wb') as fid:
+        #     cPickle.dump(gt_roidb, fid, cPickle.HIGHEST_PROTOCOL)
+        # print('wrote gt roidb to {}'.format(cache_file))
 
         return gt_roidb
 

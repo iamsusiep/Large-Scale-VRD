@@ -42,15 +42,15 @@ class vg_wiki_and_relco_lan():
         self._predicate_categories = list(set(_predicate_categories))
         print(len(self._predicate_categories))
 
-        cache_path = osp.abspath(osp.join(cfg.DATA_DIR, 'cache'))
-        cache_file = os.path.join(cache_path, 'vg_wiki_and_relco_gt_landb.pkl')
-        if os.path.exists(cache_file):
-            with open(cache_file, 'rb') as fid:
-                landb = cPickle.load(fid)
-            logger.info('vg wiki and relco spo joined and merged gt landb loaded from {}'.format(cache_file))
-            self.obj_vecs = landb['obj_vecs']
-            self.prd_vecs = landb['prd_vecs']
-            return
+        # cache_path = osp.abspath(osp.join(cfg.DATA_DIR, 'cache'))
+        # cache_file = os.path.join(cache_path, 'vg_wiki_and_relco_gt_landb.pkl')
+        # if os.path.exists(cache_file):
+        #     with open(cache_file, 'rb') as fid:
+        #         landb = cPickle.load(fid)
+        #     logger.info('vg wiki and relco spo joined and merged gt landb loaded from {}'.format(cache_file))
+        #     self.obj_vecs = landb['obj_vecs']
+        #     self.prd_vecs = landb['prd_vecs']
+        #     return
 
         self.model = None
         self.relco_model = None
