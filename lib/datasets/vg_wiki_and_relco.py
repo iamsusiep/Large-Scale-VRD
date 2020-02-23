@@ -224,8 +224,7 @@ class vg_wiki_and_relco(imdb_rel):
             sbj_boxes[ix, :] = sbj_box
             obj_boxes[ix, :] = obj_box
             rel_boxes[ix, :] = rel_box
-            print(sbj)
-            print(sbj['name'])
+            
             sbj_names[ix] = sbj['name']
             obj_names[ix] = obj['name']
             # prd_names[ix] = prd
