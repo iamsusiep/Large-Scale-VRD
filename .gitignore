@@ -21,5 +21,10 @@ checkpoints/
 datasets/
 lib/Detectron.egg-info/
 lib/build/
-
+.ipynb_checkpoints/
+delete.py
+generate_json.py
+hi.py
+rel_vcr.json
+test.ipynb
 
