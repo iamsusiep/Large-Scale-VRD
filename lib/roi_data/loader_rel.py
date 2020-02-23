@@ -95,11 +95,12 @@ class RoIDataLoader(object):
         """Load mini-batches and put them onto the mini-batch queue."""
 
         def put_blobs_into_queue(blobs):
+            print("put_blobs_into_queue")
             ordered_blobs = OrderedDict()
             for key in self.get_output_names():
                 assert blobs[key].dtype in (np.int32, np.float32), \
                     'Blob {} of dtype {} must have dtype of ' \
-                    'np.int32 or np.float32'.format(key, blobs[key].dtype)
+                    'np.int32 or np.float32 or np.str'.format(key, blobs[key].dtype)
                 ordered_blobs[key] = blobs[key]
             coordinated_put(
                 self.coordinator, self._minibatch_queue, ordered_blobs

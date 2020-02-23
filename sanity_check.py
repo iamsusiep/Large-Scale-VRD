@@ -26,5 +26,6 @@ for x in vcr_obj:
     if x not in _object_categories:
         if x in m.keys():
             x = m[x]
-            continue
+            if x in _object_categories:
+                continue
         print(x)

@@ -80,20 +80,20 @@ def combined_roidb_for_val_test(dataset_names):
             assert all(obj_max_classes[nonzero_inds] != 0)
 
             # need gt_rel_overlaps as a dense array for argmax
-            gt_rel_overlaps = roidb[i]['gt_rel_overlaps'].toarray()
+            #gt_rel_overlaps = roidb[i]['gt_rel_overlaps'].toarray()
             # max rel_overlap with gt over classes (columns)
-            rel_max_overlaps = gt_rel_overlaps.max(axis=1)
+            #rel_max_overlaps = gt_rel_overlaps.max(axis=1)
             # gt rel_class that had the max rel_overlap
-            rel_max_classes = gt_rel_overlaps.argmax(axis=1)
-            roidb[i]['rel_max_classes'] = rel_max_classes
-            roidb[i]['rel_max_overlaps'] = rel_max_overlaps
+            #rel_max_classes = gt_rel_overlaps.argmax(axis=1)
+            #roidb[i]['rel_max_classes'] = rel_max_classes
+            #roidb[i]['rel_max_overlaps'] = rel_max_overlaps
             # sanity checks
             # max overlap of 0 => class should be zero (background)
-            zero_inds = np.where(rel_max_overlaps == 0)[0]
-            assert all(rel_max_classes[zero_inds] == 0)
+            #zero_inds = np.where(rel_max_overlaps == 0)[0]
+            #assert all(rel_max_classes[zero_inds] == 0)
             # max overlap > 0 => class should not be zero (must be a fg class)
-            nonzero_inds = np.where(rel_max_overlaps > 0)[0]
-            assert all(rel_max_classes[nonzero_inds] != 0)
+            #nonzero_inds = np.where(rel_max_overlaps > 0)[0]
+            #assert all(rel_max_classes[nonzero_inds] != 0)
 
         logger.info('Loaded dataset: {:s}'.format(ds.name))
         logger.info('len(roidb): {}'.format(len(roidb)))

@@ -8,7 +8,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-
+import json_lines
 import os
 from datasets.imdb_rel import imdb_rel
 import utils.boxes as box_utils
@@ -58,6 +58,17 @@ class vg_wiki_and_relco(imdb_rel):
         self.model = None
         self.relco_model = None
         self.relco_vec_mean = None
+        entries = []
+        val_fn= '/home/suji/spring20/vilbert_beta/data/VCR/orig/val.jsonl'
+
+        with json_lines.open(val_fn) as reader:
+            for obj in reader:
+                entries.append(obj)
+        self.d = {}
+        for entry in entries:
+            imgid =int(entry['img_id'].split('-')[1])
+            if imgid not in self.d.keys():
+                self.d[imgid] = entry['img_fn']
 
         assert os.path.exists(self._data_path), \
             'Path does not exist: {}'.format(self._data_path)
@@ -72,7 +83,9 @@ class vg_wiki_and_relco(imdb_rel):
         """
         Construct an image path from the image's "index" identifier.
         """
-        image_path = os.path.join(self._data_path, 'images', str(index) + '.jpg')
+        #image_path = os.path.join(self._data_path, 'images', str(index) + '.jpg')
+        #image_path = str(index)
+        image_path = os.path.join("/home/suji/spring20/vilbert_beta/data/VCR/vcr1images", self.d[index])
         assert os.path.exists(image_path), \
             'Path does not exist: {}'.format(image_path)
         return image_path
@@ -233,7 +246,7 @@ class vg_wiki_and_relco(imdb_rel):
             # prd_cls = self._predicate_class_to_ind[str(prd_names[ix])]
             gt_sbj_classes[ix] = sbj_cls
             gt_obj_classes[ix] = obj_cls
-            gt_rel_classes[ix] = prd_cls
+            #gt_rel_classes[ix] = prd_cls
             sbj_overlaps[ix, sbj_cls] = 1.0
             obj_overlaps[ix, obj_cls] = 1.0
             # rel_overlaps[ix, prd_cls] = 1.0
