@@ -178,7 +178,7 @@ class RoIDataLoader(object):
                     group_blobs, valid = get_minibatch(
                         self._split,
                         self._landb, minibatch_db, db_inds,
-                        [group_proposals], None)
+                        [group_proposals], None, self.d)
                     blobs.append(group_blobs)
         return blobs
 

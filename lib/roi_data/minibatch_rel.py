@@ -141,7 +141,7 @@ def _get_image_blob(roidb,d = None):
             cnt += 1
             logger.info(
                 'NoneType image found. Trying to read for {:d} times'.format(cnt))
-            im = cv2.imread(roidb[i]['image'])
+            im = cv2.imread(d[roidb[i]['image']])
         if roidb[i]['flipped']:
             im = im[:, ::-1, :]
         target_size = cfg.SCALES[scale_inds[i]]
