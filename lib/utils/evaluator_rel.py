@@ -76,20 +76,20 @@ class Evaluator():
 
         self.rank_k = 250
         self.all_rel_k = [1, 10, 70]
-        '''
         self.det_list = \
             ['image_id', 'image_idx',
              'boxes_sbj', 'boxes_obj', 'boxes_rel',
              'labels_sbj', 'labels_obj', 'labels_rel',
              'scores_sbj', 'scores_obj', 'scores_rel',
-             'gt_labels_sbj', 'gt_labels_obj', 'gt_labels_rel',
-             'gt_boxes_sbj', 'gt_boxes_obj', 'gt_boxes_rel']
+             'gt_labels_sbj', 'gt_labels_obj', 
+             'gt_boxes_sbj', 'gt_boxes_obj', 'gt_boxes_rel'] 
         '''
         self.det_list = \
             ['image_id', 'image_idx',
              'boxes_sbj', 'boxes_obj', 'boxes_rel',
              'labels_sbj', 'labels_obj', 'labels_rel',
              'scores_sbj', 'scores_obj', 'scores_rel']
+        '''
         self.all_dets = {key: [] for key in self.det_list}
         print("roidb_size", roidb_size)
         self.roidb_size = roidb_size
