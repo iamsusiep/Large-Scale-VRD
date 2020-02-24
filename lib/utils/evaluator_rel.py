@@ -292,12 +292,12 @@ class Evaluator():
                 gpu_id, 'sbj_pos_labels_int32'))
             gt_labels_obj = workspace.FetchBlob(prefix + '{}/{}'.format(
                 gpu_id, 'obj_pos_labels_int32'))
-            gt_labels_rel = workspace.FetchBlob(prefix + '{}/{}'.format(
-                gpu_id, 'rel_pos_labels_int32'))
+            # gt_labels_rel = workspace.FetchBlob(prefix + '{}/{}'.format(
+            #     gpu_id, 'rel_pos_labels_int32'))
 
             gt_labels_sbj -= 1
             gt_labels_obj -= 1
-            gt_labels_rel -= 1
+            # gt_labels_rel -= 1
             gt_boxes_sbj = workspace.FetchBlob(prefix + '{}/{}'.format(
                 gpu_id, 'sbj_gt_boxes')) / scale
             gt_boxes_obj = workspace.FetchBlob(prefix + '{}/{}'.format(
@@ -306,7 +306,7 @@ class Evaluator():
                 gpu_id, 'rel_gt_boxes')) / scale
             self.all_dets['gt_labels_sbj'].append(gt_labels_sbj)
             self.all_dets['gt_labels_obj'].append(gt_labels_obj)
-            self.all_dets['gt_labels_rel'].append(gt_labels_rel)
+            # self.all_dets['gt_labels_rel'].append(gt_labels_rel)
             self.all_dets['gt_boxes_sbj'].append(gt_boxes_sbj)
             self.all_dets['gt_boxes_obj'].append(gt_boxes_obj)
             self.all_dets['gt_boxes_rel'].append(gt_boxes_rel)
@@ -438,77 +438,77 @@ class Evaluator():
                                         p_ind / float(self.rank_k) - 1 + \
                                         o_ind / float(self.rank_k) - 1) / 3.0
 
-            sbj_k = 1
-            # rel_k = 70
-            obj_k = 1
+            # sbj_k = 1
+            # # rel_k = 70
+            # obj_k = 1
             # det_labels = []
             # det_boxes = []
             # gt_labels = []
             # gt_boxes = []
-            for i, rel_k in enumerate(self.all_rel_k):
-                if det_labels_sbj.shape[0] > 0:
-                    topk_labels_sbj = det_labels_sbj[:, :sbj_k]
-                    topk_labels_rel = det_labels_rel[:, :rel_k]
-                    topk_labels_obj = det_labels_obj[:, :obj_k]
-                else:  # In the ECCV2016 proposals sometimes there is no det box
-                    topk_labels_sbj = np.zeros((0, sbj_k), dtype=np.int32)
-                    topk_labels_rel = np.zeros((0, rel_k), dtype=np.int32)
-                    topk_labels_obj = np.zeros((0, obj_k), dtype=np.int32)
+            # for i, rel_k in enumerate(self.all_rel_k):
+            #     if det_labels_sbj.shape[0] > 0:
+            #         topk_labels_sbj = det_labels_sbj[:, :sbj_k]
+            #         # topk_labels_rel = det_labels_rel[:, :rel_k]
+            #         topk_labels_obj = det_labels_obj[:, :obj_k]
+            #     else:  # In the ECCV2016 proposals sometimes there is no det box
+            #         topk_labels_sbj = np.zeros((0, sbj_k), dtype=np.int32)
+            #         # topk_labels_rel = np.zeros((0, rel_k), dtype=np.int32)
+            #         topk_labels_obj = np.zeros((0, obj_k), dtype=np.int32)
 
-                if det_scores_sbj.shape[0] > 0:
-                    topk_scores_sbj = det_scores_sbj[:, :sbj_k]
-                    topk_scores_rel = det_scores_rel[:, :rel_k]
-                    topk_scores_obj = det_scores_obj[:, :obj_k]
-                else:  # In the ECCV2016 proposals sometimes there is no det box
-                    topk_scores_sbj = np.zeros((0, sbj_k), dtype=np.float32)
-                    topk_scores_rel = np.zeros((0, rel_k), dtype=np.float32)
-                    topk_scores_obj = np.zeros((0, obj_k), dtype=np.float32)
+            #     if det_scores_sbj.shape[0] > 0:
+            #         topk_scores_sbj = det_scores_sbj[:, :sbj_k]
+            #         topk_scores_rel = det_scores_rel[:, :rel_k]
+            #         topk_scores_obj = det_scores_obj[:, :obj_k]
+            #     else:  # In the ECCV2016 proposals sometimes there is no det box
+            #         topk_scores_sbj = np.zeros((0, sbj_k), dtype=np.float32)
+            #         topk_scores_rel = np.zeros((0, rel_k), dtype=np.float32)
+            #         topk_scores_obj = np.zeros((0, obj_k), dtype=np.float32)
 
-                topk_cube_spo_labels = np.zeros(
-                    (topk_labels_sbj.shape[0], sbj_k * obj_k * rel_k, 3), dtype=np.int32)
-                topk_cube_spo_scores = np.zeros(
-                    (topk_labels_sbj.shape[0], sbj_k * obj_k * rel_k), dtype=np.float32)
-                topk_cube_p_scores = np.zeros(
-                    (topk_labels_sbj.shape[0], sbj_k * obj_k * rel_k), dtype=np.float32)
-                for l in range(sbj_k):
-                    for m in range(rel_k):
-                        for n in range(obj_k):
-                            topk_cube_spo_labels[:, l * rel_k * obj_k + m * obj_k + n, 0] = \
-                                topk_labels_sbj[:, l]
-                            topk_cube_spo_labels[:, l * rel_k * obj_k + m * obj_k + n, 1] = \
-                                topk_labels_rel[:, m]
-                            topk_cube_spo_labels[:, l * rel_k * obj_k + m * obj_k + n, 2] = \
-                                topk_labels_obj[:, n]
-                            topk_cube_spo_scores[:, l * rel_k * obj_k + m * obj_k + n] = \
-                                np.exp(topk_scores_sbj[:, l] +
-                                       topk_scores_rel[:, m] +
-                                       topk_scores_obj[:, n])
+            #     topk_cube_spo_labels = np.zeros(
+            #         (topk_labels_sbj.shape[0], sbj_k * obj_k * rel_k, 3), dtype=np.int32)
+            #     topk_cube_spo_scores = np.zeros(
+            #         (topk_labels_sbj.shape[0], sbj_k * obj_k * rel_k), dtype=np.float32)
+            #     topk_cube_p_scores = np.zeros(
+            #         (topk_labels_sbj.shape[0], sbj_k * obj_k * rel_k), dtype=np.float32)
+            #     for l in range(sbj_k):
+            #         for m in range(rel_k):
+            #             for n in range(obj_k):
+            #                 topk_cube_spo_labels[:, l * rel_k * obj_k + m * obj_k + n, 0] = \
+            #                     topk_labels_sbj[:, l]
+            #                 topk_cube_spo_labels[:, l * rel_k * obj_k + m * obj_k + n, 1] = \
+            #                     topk_labels_rel[:, m]
+            #                 topk_cube_spo_labels[:, l * rel_k * obj_k + m * obj_k + n, 2] = \
+            #                     topk_labels_obj[:, n]
+            #                 topk_cube_spo_scores[:, l * rel_k * obj_k + m * obj_k + n] = \
+            #                     np.exp(topk_scores_sbj[:, l] +
+            #                            topk_scores_rel[:, m] +
+            #                            topk_scores_obj[:, n])
 
-                            topk_cube_p_scores[:, l * rel_k * obj_k + m * obj_k + n] = \
-                                np.exp(topk_scores_rel[:, m])
+            #                 topk_cube_p_scores[:, l * rel_k * obj_k + m * obj_k + n] = \
+            #                     np.exp(topk_scores_rel[:, m])
 
-                topk_cube_spo_labels_reshape = topk_cube_spo_labels.reshape((-1, 3))
-                topk_cube_spo_scores_reshape = topk_cube_spo_scores.reshape((-1, 1))
+            #     topk_cube_spo_labels_reshape = topk_cube_spo_labels.reshape((-1, 3))
+            #     topk_cube_spo_scores_reshape = topk_cube_spo_scores.reshape((-1, 1))
 
-                self.all_det_labels[i].append(
-                    np.concatenate((topk_cube_spo_scores_reshape[:, 0, np.newaxis],
-                                    topk_cube_spo_labels_reshape[:, 0, np.newaxis],
-                                    topk_cube_spo_labels_reshape[:, 1, np.newaxis],
-                                    topk_cube_spo_labels_reshape[:, 2, np.newaxis]),
-                                    axis=1))
-                self.all_det_boxes[i].append(np.repeat(
-                    np.concatenate((det_boxes_sbj[:, np.newaxis, :],
-                                    det_boxes_obj[:, np.newaxis, :]),
-                                    axis=1), sbj_k * rel_k * obj_k, axis=0))
-                self.all_gt_labels[i].append(
-                    np.concatenate((gt_labels_sbj[:, np.newaxis],
-                                    gt_labels_rel[:, np.newaxis],
-                                    gt_labels_obj[:, np.newaxis]),
-                                    axis=1))
-                self.all_gt_boxes[i].append(
-                    np.concatenate((gt_boxes_sbj[:, np.newaxis, :],
-                                    gt_boxes_obj[:, np.newaxis, :]),
-                                    axis=1))
+            #     self.all_det_labels[i].append(
+            #         np.concatenate((topk_cube_spo_scores_reshape[:, 0, np.newaxis],
+            #                         topk_cube_spo_labels_reshape[:, 0, np.newaxis],
+            #                         topk_cube_spo_labels_reshape[:, 1, np.newaxis],
+            #                         topk_cube_spo_labels_reshape[:, 2, np.newaxis]),
+            #                         axis=1))
+            #     self.all_det_boxes[i].append(np.repeat(
+            #         np.concatenate((det_boxes_sbj[:, np.newaxis, :],
+            #                         det_boxes_obj[:, np.newaxis, :]),
+            #                         axis=1), sbj_k * rel_k * obj_k, axis=0))
+            #     self.all_gt_labels[i].append(
+            #         np.concatenate((gt_labels_sbj[:, np.newaxis],
+            #                         gt_labels_rel[:, np.newaxis],
+            #                         gt_labels_obj[:, np.newaxis]),
+            #                         axis=1))
+            #     self.all_gt_boxes[i].append(
+            #         np.concatenate((gt_boxes_sbj[:, np.newaxis, :],
+            #                         gt_boxes_obj[:, np.newaxis, :]),
+            #                         axis=1))
 
         return new_batch_flag
 
