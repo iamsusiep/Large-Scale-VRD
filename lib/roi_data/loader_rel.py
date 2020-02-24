@@ -99,7 +99,7 @@ class RoIDataLoader(object):
         self.coordinator = Coordinator()
 
         self._output_names = get_minibatch_blob_names(split)
-        self._shuffle_roidb_inds()
+        # self._shuffle_roidb_inds()
         self.create_threads()
 
     def minibatch_loader_thread(self):
@@ -188,11 +188,11 @@ class RoIDataLoader(object):
                     blobs.append(group_blobs)
         return blobs
 
-    def _shuffle_roidb_inds(self):
-        """Randomly permute the training roidb. Not thread safe."""
-        self._perm = np.random.permutation(np.arange(len(self._roidb)))
-        self._perm = deque(self._perm)
-        self._cur = 0
+    # def _shuffle_roidb_inds(self):
+    #     """Randomly permute the training roidb. Not thread safe."""
+    #     self._perm = np.random.permutation(np.arange(len(self._roidb)))
+    #     self._perm = deque(self._perm)
+    #     self._cur = 0
 
     def _get_next_minibatch_inds(self):
         """Return the roidb indices for the next minibatch. Thread safe."""
@@ -204,8 +204,8 @@ class RoIDataLoader(object):
             db_inds = [self._perm[i] for i in range(cfg.TRAIN.IMS_PER_BATCH)]
             self._perm.rotate(-cfg.TRAIN.IMS_PER_BATCH)
             self._cur += cfg.TRAIN.IMS_PER_BATCH
-            if self._cur >= len(self._perm):
-                self._shuffle_roidb_inds()
+            # if self._cur >= len(self._perm):
+            #     self._shuffle_roidb_inds()
         return db_inds
 
     def get_output_names(self):
