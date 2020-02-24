@@ -194,7 +194,7 @@ class vg_wiki_and_relco(imdb_rel):
         print("Loading image %d/%d..." % (cnt + 1, length))
 
         assert index == img_rels['image_id']  # sanity check
-
+        print("index", index)
         num_rels = len(img_rels['relationships'])
 
         sbj_boxes = np.zeros((num_rels, 4), dtype=np.uint16)
@@ -364,4 +364,5 @@ class vg_wiki_and_relco(imdb_rel):
                 'sbj_vecs': sbj_vecs,
                 'obj_vecs': obj_vecs,
                 'prd_vecs': None,
-                'flipped': False}
+                'flipped': False,
+                'image_id': index}

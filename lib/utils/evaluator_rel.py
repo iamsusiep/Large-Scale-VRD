@@ -1,4 +1,4 @@
-# Copyright (c) Facebook, Inc. and its affiliates.
+#opyright (c) Facebook, Inc. and its affiliates.
 # All rights reserved.
 #
 # This source code is licensed under the license found in the
@@ -76,7 +76,7 @@ class Evaluator():
 
         self.rank_k = 250
         self.all_rel_k = [1, 10, 70]
-
+        '''
         self.det_list = \
             ['image_id', 'image_idx',
              'boxes_sbj', 'boxes_obj', 'boxes_rel',
@@ -84,8 +84,14 @@ class Evaluator():
              'scores_sbj', 'scores_obj', 'scores_rel',
              'gt_labels_sbj', 'gt_labels_obj', 'gt_labels_rel',
              'gt_boxes_sbj', 'gt_boxes_obj', 'gt_boxes_rel']
+        '''
+        self.det_list = \
+            ['image_id', 'image_idx',
+             'boxes_sbj', 'boxes_obj', 'boxes_rel',
+             'labels_sbj', 'labels_obj', 'labels_rel',
+             'scores_sbj', 'scores_obj', 'scores_rel']
         self.all_dets = {key: [] for key in self.det_list}
-
+        print("roidb_size", roidb_size)
         self.roidb_size = roidb_size
         self.tested = [set() for i in range(roidb_size)]
 
@@ -160,6 +166,97 @@ class Evaluator():
             self.all_obj_vis_embds = []
             self.all_prd_vis_embds = []
 
+    def vcr_eval_im_dets_triplet_topk(self):
+
+        prefix = 'gpu_' if cfg.DEVICE == 'GPU' else 'cpu_'
+
+        if cfg.TEST.GET_ALL_LAN_EMBEDDINGS:
+            if self.all_obj_lan_embds is None:
+                self.all_obj_lan_embds = workspace.FetchBlob(
+                    prefix + '{}/{}'.format(cfg.ROOT_DEVICE_ID, 'all_obj_lan_embds'))
+            if self.all_prd_lan_embds is None:
+                self.all_prd_lan_embds = workspace.FetchBlob(
+                    prefix + '{}/{}'.format(cfg.ROOT_DEVICE_ID, 'all_prd_lan_embds'))
+
+        new_batch_flag = False
+        for gpu_id in range(cfg.ROOT_DEVICE_ID, cfg.ROOT_DEVICE_ID + cfg.NUM_DEVICES):
+
+            image_idx = workspace.FetchBlob(
+                prefix + '{}/{}'.format(gpu_id, 'image_idx'))[0]
+            subbatch_id = workspace.FetchBlob(
+                prefix + '{}/{}'.format(gpu_id, 'subbatch_id'))[0]
+            if subbatch_id in self.tested[image_idx]:
+                continue
+            new_batch_flag = True
+            self.tested[image_idx].add(subbatch_id)
+
+            self.all_dets['image_idx'].append(int(image_idx))
+            #image_id = workspace.FetchBlob(
+            #    prefix + '{}/{}'.format(gpu_id, 'image_id'))[0]
+            #self.all_dets['image_id'].append(image_id)
+
+            scale = \
+                workspace.FetchBlob(prefix + '{}/{}'.format(gpu_id, 'image_scale'))[0]
+            num_proposals = int(workspace.FetchBlob(
+                prefix + '{}/{}'.format(gpu_id, 'num_proposals'))[0])
+            if num_proposals == 0:
+                det_boxes_sbj = np.empty((0, 4), dtype=np.float32)
+                det_boxes_obj = np.empty((0, 4), dtype=np.float32)
+                det_boxes_rel = np.empty((0, 4), dtype=np.float32)
+                det_labels_sbj = np.empty((0, 20), dtype=np.int32)
+                det_labels_obj = np.empty((0, 20), dtype=np.int32)
+                det_labels_rel = np.empty((0, 20), dtype=np.int32)
+                det_scores_sbj = np.empty((0, 20), dtype=np.float32)
+                det_scores_obj = np.empty((0, 20), dtype=np.float32)
+                det_scores_rel = np.empty((0, 20), dtype=np.float32)
+            else:
+                det_boxes_sbj = workspace.FetchBlob(prefix + '{}/{}'.format(
+                    gpu_id, 'sbj_rois'))[:, 1:] / scale
+                det_boxes_obj = workspace.FetchBlob(prefix + '{}/{}'.format(
+                    gpu_id, 'obj_rois'))[:, 1:] / scale
+                det_boxes_rel = workspace.FetchBlob(prefix + '{}/{}'.format(
+                    gpu_id, 'rel_rois_prd'))[:, 1:] / scale
+                det_labels_sbj = \
+                    workspace.FetchBlob(prefix + '{}/{}'.format(gpu_id, 'labels_sbj'))
+                det_labels_obj = \
+                    workspace.FetchBlob(prefix + '{}/{}'.format(gpu_id, 'labels_obj'))
+                det_labels_rel = \
+                    workspace.FetchBlob(prefix + '{}/{}'.format(gpu_id, 'labels_rel'))
+                det_scores_sbj = \
+                    workspace.FetchBlob(prefix + '{}/{}'.format(gpu_id, 'scores_sbj'))
+                det_scores_obj = \
+                    workspace.FetchBlob(prefix + '{}/{}'.format(gpu_id, 'scores_obj'))
+                det_scores_rel = \
+                    workspace.FetchBlob(prefix + '{}/{}'.format(gpu_id, 'scores_rel'))
+            self.all_dets['boxes_sbj'].append(det_boxes_sbj)
+            self.all_dets['boxes_obj'].append(det_boxes_obj)
+            self.all_dets['boxes_rel'].append(det_boxes_rel)
+            self.all_dets['labels_sbj'].append(det_labels_sbj)
+            self.all_dets['labels_obj'].append(det_labels_obj)
+            self.all_dets['labels_rel'].append(det_labels_rel)
+            self.all_dets['scores_sbj'].append(det_scores_sbj)
+            self.all_dets['scores_obj'].append(det_scores_obj)
+            self.all_dets['scores_rel'].append(det_scores_rel)
+
+            if cfg.TEST.GET_ALL_VIS_EMBEDDINGS:
+                embds_sbj = workspace.FetchBlob(prefix + '{}/{}'.format(
+                    gpu_id, 'x_sbj'))
+                embds_obj = workspace.FetchBlob(prefix + '{}/{}'.format(
+                    gpu_id, 'x_obj'))
+                embds_prd = workspace.FetchBlob(prefix + '{}/{}'.format(
+                    gpu_id, 'x_rel'))
+                self.all_sbj_vis_embds.append(embds_sbj)
+                self.all_obj_vis_embds.append(embds_obj)
+                self.all_prd_vis_embds.append(embds_prd)
+
+            sbj_k = 1
+            # rel_k = 70
+            obj_k = 1
+            # det_labels = []
+            # det_boxes = []
+            # gt_labels = []
+            # gt_boxes = []
+        return new_batch_flag
     def eval_im_dets_triplet_topk(self):
 
         prefix = 'gpu_' if cfg.DEVICE == 'GPU' else 'cpu_'
@@ -216,6 +313,7 @@ class Evaluator():
 
             num_proposals = int(workspace.FetchBlob(
                 prefix + '{}/{}'.format(gpu_id, 'num_proposals'))[0])
+            print("evaluator_rel, num_proposals", num_proposals)
             if num_proposals == 0:
                 det_boxes_sbj = np.empty((0, 4), dtype=np.float32)
                 det_boxes_obj = np.empty((0, 4), dtype=np.float32)
@@ -530,3 +628,4 @@ class Evaluator():
                 pickle.dump(self.all_prd_vis_embds, f, pickle.HIGHEST_PROTOCOL)
             logger.info('Wrote all_prd_vis_embds to {}'.format(
                 os.path.abspath(all_prd_vis_embds_file)))
+

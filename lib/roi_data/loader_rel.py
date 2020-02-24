@@ -30,7 +30,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-
+import json_lines
 from collections import deque
 from collections import OrderedDict
 import logging
@@ -40,7 +40,7 @@ import signal
 import threading
 import time
 import uuid
-
+import os
 from caffe2.python import core, workspace
 
 from core.config_rel import cfg
@@ -66,10 +66,16 @@ class RoIDataLoader(object):
         blobs_queue_capacity=8
     ):
         self.d = {}
+        entries = []
+        val_fn= '/home/suji/spring20/vilbert_beta/data/VCR/orig/val.jsonl'
+
+        with json_lines.open(val_fn) as reader:
+            for obj in reader:
+                entries.append(obj)
         for entry in entries:
             imgid =int(entry['img_id'].split('-')[1])
             if imgid not in self.d.keys():
-                self.d[imgid] = entry['img_fn']
+                self.d[imgid] = os.path.join("/home/suji/spring20/vilbert_beta/data/VCR/vcr1images",entry['img_fn'])
         self._split = split
         self._roidb = roidb
         self._landb = landb
